@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Talks Repository API
+  description: API for managing and retrieving TED talks from a CSV repository.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /talks:
+    get:
+      summary: Get a page of talks
+      operationId: getTalks
+      parameters:
+        - name: pageNumber
+          in: query
+          description: Page number for pagination (greater than 0)
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: countPerPage
+          in: query
+          description: Number of talks to return per page (greater than 0 and less than 500)
+          required: false
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: A list of TED talks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TedTalk'
+    post:
+      summary: Add a new TED talk
+      operationId: addTalk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TedTalk'
+      responses:
+        '204':
+          description: Talk added successfully
+        '400':
+          description: Invalid input (e.g., duplicate talk)
+
+  /talks/search/{query}:
+    get:
+      summary: Search talks by title or author
+      operationId: searchTalks
+      parameters:
+        - name: query
+          in: path
+          description: Search term for talks (case-insensitive)
+          required: true
+          schema:
+            type: string
+        - name: count
+          in: query
+          description: Maximum number of results (1 to 500)
+          required: false
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: A list of talks matching the search term
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TedTalk'
+  /talks/most-influential:
+    get:
+      summary: Get the most influential talks grouped by year
+      operationId: getInfluentialTalksByYear
+      responses:
+        '200':
+          description: A map of top 3 influential talks per year
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TedTalk'
+
+components:
+  schemas:
+    TedTalk:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the TED talk
+        author:
+          type: string
+          description: The author (or speaker) of the TED talk
+        date:
+          type: string
+          format: date
+          description: The date of the talk in `MM-YYYY` format
+        views:
+          type: integer
+          description: The number of views the talk has received
+        likes:
+          type: integer
+          description: The number of likes the talk has received
+        link:
+          type: string
+          description: The URL link to the TED talk
+      required:
+        - title
+        - author
+        - date
+        - views
+        - likes
+        - link
