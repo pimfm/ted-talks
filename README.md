@@ -35,8 +35,10 @@ If the server starts successfully, you'll see the following output:
 
 ```
 2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8989
 ```
+
+**🔔 Notice** the port is 8989
 
 ## Open API
 Navigate to `/openapi` after running the server to see and interact with the API.
